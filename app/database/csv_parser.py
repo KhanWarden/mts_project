@@ -1,4 +1,10 @@
+from pathlib import Path
 import pandas as pd
+
+from app.methods import round_value
+
+project_folder = Path(__file__).parent.parent.parent
+csv_file = project_folder / 'data' / 'data.csv'
 
 
 def load_data(file_path):
@@ -6,35 +12,34 @@ def load_data(file_path):
 
 
 class CSVParser:
-    def __init__(self, file_path):
-        self.file_path = file_path
-        self.data = load_data(file_path)
+    def __init__(self):
+        self.file_path = csv_file
+        self.data = load_data(csv_file)
+        self.index_columns()
 
     def index_columns(self):
         self.data.set_index('Student_ID', inplace=True)
 
-    def get_column(self, column_name):
-        # получаем столбец по имени
-        return self.data[column_name]
-
     def get_row(self, student_id):
-        # получаем строку по Student_ID
         return self.data.loc[student_id]
 
-    def filter_data(self, column_name, value):
-        # фильтруем данные по значению в столбце
-        return self.data[self.data[column_name] == value]
+    def get_formatted_row(self, student_id):
+        row = self.get_row(student_id)
+        result = ""
+        for column, value in row.iteritems():
+            result += f"{column}: {value}\n"
+        return result
 
-    def get_all_data(self):
-        # возвращаем все данные
-        return self.data
 
-    def add_new_row(self, row_data):
-        # добавляем новую строку в dataframe
-        self.data = self.data.append(row_data, ignore_index=True)
+def get_page(page: int):
+    start_page = page * 5
+    end_page = start_page + 5
+    page_data = pd.read_csv(csv_file).iloc[start_page:end_page]
 
-    def save_data(self, file_path=None):
-        # сохраняем dataframe обратно в csv
-        if file_path is None:
-            file_path = self.file_path
-        self.data.to_csv(file_path)
+    formatted_data = ""
+    for _, row in page_data.iterrows():
+        for columnn, value in row.items():
+            formatted_data += f"<b>{columnn}:</b> {round_value(value)}\n"
+        formatted_data += "\n"
+
+    return formatted_data
