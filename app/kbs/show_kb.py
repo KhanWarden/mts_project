@@ -1,5 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 def show_kb():
     inline_kb = InlineKeyboardMarkup(inline_keyboard=[
@@ -27,7 +26,7 @@ def pagination_kb(current_page: int, total_pages: int):
     else:
         inline_kb.inline_keyboard.append([InlineKeyboardButton(text=" ", callback_data="None")])
 
-    inline_kb.inline_keyboard.append([InlineKeyboardButton(text="Выгрузить страницу в HTML",
-                                                           callback_data="export_page")])
+    inline_kb.inline_keyboard.append([InlineKeyboardButton(text="Открыть страницу в веб-приложении",
+                                                           web_app=WebAppInfo(url="https://12f6-5-76-249-100.ngrok-free.app"))])
 
     return inline_kb

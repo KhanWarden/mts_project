@@ -27,9 +27,10 @@ async def show_data_handler(call: CallbackQuery):
 
 
 @router.callback_query(F.data == "show_pages")
-async def show_pages_handler(call: CallbackQuery):
+async def show_pages_handler(call: CallbackQuery, state: FSMContext):
     total_pages = (len(data) + 5 - 1) // 10
     page_data = get_page(0)
+    await csv_to_html(0)
     await call.message.edit_text(f"Page 1 of {total_pages}\n\n"
                                  f"{page_data}",
                                  reply_markup=pagination_kb(0, total_pages))
@@ -38,7 +39,7 @@ async def show_pages_handler(call: CallbackQuery):
 @router.callback_query(F.data.startswith("page_"))
 async def pagination_handler(call: CallbackQuery, state: FSMContext):
     page = int(call.data.split("_")[1])
-    await state.update_data(page=page)
+    await csv_to_html(int(page))
     total_pages = (len(data) + 5 - 1) // 10
     page_data = get_page(page)
     await call.message.edit_text(f"Page {page + 1} of {total_pages}\n\n"

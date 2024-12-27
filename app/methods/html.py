@@ -11,7 +11,7 @@ async def csv_to_html(page: int):
     end_page = start_page + 5
     try:
         page_data = pd.read_csv(csv_file).iloc[start_page:end_page]
-        html_content = page_data.to_html(index=False)
+        html_content = page_data.to_html(index=False, classes="table table-bordered", border=0)
         with open(html_path, 'w') as f:
             f.write(html_content)
     except Exception as e:
