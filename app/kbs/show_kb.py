@@ -1,9 +1,11 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
+
 def show_kb():
     inline_kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Посмотреть данные по страницам", callback_data="show_pages")],
         [InlineKeyboardButton(text="Отправить Excel файл с данными", callback_data="send_excel")],
+        [InlineKeyboardButton(text="Показать студента по ID", callback_data="show_stud_by_id")],
         [InlineKeyboardButton(text="⬅️ В меню", callback_data="to_menu")]
     ])
     return inline_kb
@@ -27,6 +29,6 @@ def pagination_kb(current_page: int, total_pages: int):
         inline_kb.inline_keyboard.append([InlineKeyboardButton(text=" ", callback_data="None")])
 
     inline_kb.inline_keyboard.append([InlineKeyboardButton(text="Открыть страницу в веб-приложении",
-                                                           web_app=WebAppInfo(url="https://12f6-5-76-249-100.ngrok-free.app"))])
+                                                           web_app=WebAppInfo(url="https://89c1-5-76-249-100.ngrok-free.app/page"))])
 
     return inline_kb

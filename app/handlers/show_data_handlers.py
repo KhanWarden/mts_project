@@ -2,10 +2,11 @@ from pathlib import Path
 import pandas as pd
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, FSInputFile
-from app.database import get_page, csv_to_excel
-from app.kbs import pagination_kb, show_kb, main_kb
-from app.methods import fix_path, csv_to_html
+from aiogram.types import CallbackQuery, FSInputFile, Message
+from app.database import get_page, csv_to_excel, CSVParser
+from app.kbs import pagination_kb, show_kb, main_kb, to_menu_kb
+from app.methods import fix_path, csv_to_html, format_id
+from app.states import ShowDataStates
 
 router = Router()
 project_folder = Path(__file__).parent.parent.parent
@@ -13,6 +14,7 @@ csv_file = project_folder / 'data' / 'data.csv'
 data = pd.read_csv(csv_file)
 excel_file = project_folder / 'data' / 'data.xlsx'
 html_file = project_folder / 'data' / 'data.html'
+csv_parser = CSVParser()
 
 
 @router.callback_query(F.data == "None")
@@ -68,3 +70,23 @@ async def send_excel_handler(call: CallbackQuery):
                               "<b>2. Murdasov Alexander</b>\n"
                               "<b>3. Sulimenov Zhaslan</b>",
                               reply_markup=main_kb())
+
+
+@router.callback_query(F.data == "show_stud_by_id")
+async def show_student_handler(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_text("Впишите ID студента")
+    await state.set_state(ShowDataStates.stud_id)
+
+
+@router.message(ShowDataStates.stud_id)
+async def show_student_handler(message: Message, state: FSMContext):
+    try:
+        stud_id = int(message.text)
+        stud_id = format_id(stud_id)
+        await message.answer(csv_parser.get_formatted_row(student_id=stud_id),
+                             reply_markup=to_menu_kb())
+        await state.clear()
+
+    except Exception as e:
+        print(e)
+        await message.answer("Неверное число!")
