@@ -9,7 +9,7 @@ html_data = project_folder / 'data' / 'data.html'
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/page')
 def index():
     with open(html_data, 'r', encoding='utf-8') as f:
         html_content = f.read()
