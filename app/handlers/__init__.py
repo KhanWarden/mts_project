@@ -5,9 +5,10 @@ from aiogram.types import Message, CallbackQuery
 
 from app.kbs import main_kb
 from .show_data_handlers import router as show_data_router
+from .analyze_data import router as analyze_data_router
 
 router = Router()
-router.include_routers(show_data_router)
+router.include_routers(show_data_router, analyze_data_router)
 
 
 @router.message(CommandStart())

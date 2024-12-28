@@ -1,8 +1,9 @@
-from .parser import fix_path
+from .parser import fix_path, format_id
 from .html import csv_to_html
 
 __all__ = ['round_value',
            'fix_path',
+           'format_id',
            'csv_to_html']
 
 
