@@ -29,6 +29,6 @@ def pagination_kb(current_page: int, total_pages: int):
         inline_kb.inline_keyboard.append([InlineKeyboardButton(text=" ", callback_data="None")])
 
     inline_kb.inline_keyboard.append([InlineKeyboardButton(text="Открыть страницу в веб-приложении",
-                                                           web_app=WebAppInfo(url="https://2f52-5-76-249-100.ngrok-free.app/page"))])
+                                                           web_app=WebAppInfo(url="https://taldybayev.ru/page"))])
 
     return inline_kb
