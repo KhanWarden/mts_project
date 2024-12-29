@@ -66,3 +66,15 @@ class AnalyzeCSV(CSVParser):
     def most_difficult_lesson(self):
         most_difficult_lesson = self.data.groupby('lesson_type')['stress_level'].mean().idxmax()
         return most_difficult_lesson
+
+    def average_performance_score(self, instrument, class_level):
+        filtered_data = self.data[
+            (self.data['Instrument_Type'] == instrument) &
+            (self.data['Class_Level'] == class_level)
+        ]
+        return filtered_data['Performance_Score'].mean()
+
+    def engagement_impact_on_skill_development(self):
+        self.data['Normalized_Engagement'] = self.data['Engagement_Level'] / 10
+        correlation = self.calculate_correlation('Normalized_Engagement', 'Skill_Development')
+        return correlation

@@ -8,7 +8,7 @@ class ColumnsCallback(CallbackData, prefix="columns"):
 
 
 columns = ('Accuracy', 'Rhythm', 'Tempo', 'Pitch Accuracy', 'Duration', 'Volume', 'Heart Rate',
-           'Blood Pressure', 'Focus Time', 'Performance Score', 'Engagement Score')
+           'Blood Pressure', 'Focus Time', 'Performance Score', 'Engagement Score', 'Stress Level')
 
 
 def columns_kb(action: str):

@@ -4,13 +4,13 @@ from app.kbs import analyze_data_kb
 from .calculate_stats import router as calculate_stats_router
 from .correlation import router as correlation_router
 from .trends import router as trends_router
-from .the_most_top import router as the_most_top_router
+from .analysis import router as analysis_router
 
 router = Router()
 router.include_routers(calculate_stats_router,
                        correlation_router,
                        trends_router,
-                       the_most_top_router)
+                       analysis_router)
 
 
 @router.callback_query(F.data == "analyze_data")

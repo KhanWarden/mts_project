@@ -92,11 +92,11 @@ async def calculate_stats_handler(call: CallbackQuery):
                                  reply_markup=columns_kb(action="average_values_call"))
 
 
-@router.callback_query(ColumnsCallback.filter(F.action == "avg_values_call"))
+@router.callback_query(ColumnsCallback.filter(F.action == "average_values_call"))
 async def avg_column_handler(call: CallbackQuery, callback_data: ColumnsCallback):
     column_name = callback_data.column
     column_name_fixed = column_name.replace(" ", "_")
-    avg_value = analyze_csv.get_average_value(column_name)
+    avg_value = analyze_csv.get_average_value(column_name_fixed)
     await call.message.edit_text(f"<b>The average value from {column_name}:</b>\n"
                                  f"{avg_value}",
                                  reply_markup=webapp_kb(avg_value))

@@ -38,6 +38,11 @@ class CSVParser:
     def get_columns_names(self) -> tuple:
         return tuple(self.data.columns)
 
+    def get_unique_column_values(self, column_name) -> set:
+        if column_name not in self.data.columns:
+            raise ValueError(f"Column '{column_name}' doesn't exist.")
+        return set(self.data[column_name])
+
 
 def get_page(page: int):
     start_page = page * 5
