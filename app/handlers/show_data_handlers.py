@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, FSInputFile, Message
 from app.database import get_page, csv_to_excel, CSVParser
 from app.kbs import pagination_kb, show_kb, main_kb, to_menu_kb
-from app.methods import fix_path, csv_to_html, format_id
+from app.methods import fix_path, csv_page_to_html, format_id
 from app.states import ShowDataStates
 
 router = Router()
@@ -32,7 +32,7 @@ async def show_data_handler(call: CallbackQuery):
 async def show_pages_handler(call: CallbackQuery, state: FSMContext):
     total_pages = (len(data) + 5 - 1) // 10
     page_data = get_page(0)
-    await csv_to_html(0)
+    await csv_page_to_html(0)
     await call.message.edit_text(f"Page 1 of {total_pages}\n\n"
                                  f"{page_data}",
                                  reply_markup=pagination_kb(0, total_pages))
@@ -41,7 +41,7 @@ async def show_pages_handler(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("page_"))
 async def pagination_handler(call: CallbackQuery, state: FSMContext):
     page = int(call.data.split("_")[1])
-    await csv_to_html(int(page))
+    await csv_page_to_html(int(page))
     total_pages = (len(data) + 5 - 1) // 10
     page_data = get_page(page)
     await call.message.edit_text(f"Page {page + 1} of {total_pages}\n\n"
@@ -55,7 +55,7 @@ async def export_page_to_html_handler(call: CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     page = int(state_data["page"])
 
-    await csv_to_html(page)
+    await csv_page_to_html(page)
     await call.message.answer_document(FSInputFile(str(html_file)))
 
 

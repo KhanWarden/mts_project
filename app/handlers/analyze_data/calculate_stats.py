@@ -1,9 +1,9 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
+from aiohttp import ClientSession
 from app.database import AnalyzeCSV
-from app.kbs import (max_columns_kb, MaxColumnsCallback, to_menu_kb, min_columns_kb, avg_columns_kb, MinColumnsCallback,
-                     AverageColumnsCallback)
+from app.kbs import (ColumnsCallback, webapp_kb, columns_kb)
 from app.states import TopStates
 
 router = Router()
@@ -13,15 +13,15 @@ analyze_csv = AnalyzeCSV()
 @router.callback_query(F.data == "max_values")
 async def calculate_stats_handler(call: CallbackQuery):
     await call.message.edit_text("Choose the column to see its max value",
-                                 reply_markup=max_columns_kb())
+                                 reply_markup=columns_kb(action="max_values_call"))
 
 
-@router.callback_query(MaxColumnsCallback.filter(F.name))
-async def column_handler(call: CallbackQuery, callback_data: MaxColumnsCallback, state: FSMContext):
-    column_name = callback_data.name
-    column_name_normalized = column_name.replace("_", " ")
-    await state.update_data(column_name=column_name,
-                            column_name_normalized=column_name_normalized)
+@router.callback_query(ColumnsCallback.filter(F.action == "max_values_call"))
+async def column_handler(call: CallbackQuery, callback_data: ColumnsCallback, state: FSMContext):
+    column_name = callback_data.column
+    column_name_fixed = column_name.replace(" ", "_")
+    await state.update_data(column_name=column_name_fixed,
+                            column_name_normalized=column_name)
 
     await call.message.edit_text("Enter a number for «Top N Max Values»")
     await state.set_state(TopStates.max_n)
@@ -36,9 +36,10 @@ async def max_n_handler(message: Message, state: FSMContext):
     try:
         n = int(message.text)
         max_values = analyze_csv.get_top_n_max_values(column_name, n)
+        values = ",".join(map(str, max_values))
         await message.answer(f"<b>Max values from {column_name_normalized}:</b>\n"
                              f"{"\n".join(f"{i + 1}. {str(value)}" for i, value in enumerate(max_values))}",
-                             reply_markup=to_menu_kb())
+                             reply_markup=webapp_kb(values))
         await state.clear()
     except ValueError:
         await message.answer("It's not a number!")
@@ -50,15 +51,15 @@ async def max_n_handler(message: Message, state: FSMContext):
 @router.callback_query(F.data == "min_values")
 async def calculate_stats_handler(call: CallbackQuery):
     await call.message.edit_text("Choose the column to see its min value",
-                                 reply_markup=min_columns_kb())
+                                 reply_markup=columns_kb(action="min_values_call"))
 
 
-@router.callback_query(MinColumnsCallback.filter(F.name))
-async def column_handler(call: CallbackQuery, callback_data: MinColumnsCallback, state: FSMContext):
-    column_name = callback_data.name.replace("-", "_")
-    column_name_normalized = column_name.replace("_", " ")
-    await state.update_data(column_name=column_name,
-                            column_name_normalized=column_name_normalized)
+@router.callback_query(ColumnsCallback.filter(F.action == "min_values_call"))
+async def column_handler(call: CallbackQuery, callback_data: ColumnsCallback, state: FSMContext):
+    column_name = callback_data.column
+    column_name_fixed = column_name.replace(" ", "_")
+    await state.update_data(column_name=column_name_fixed,
+                            column_name_normalized=column_name)
 
     await call.message.edit_text("Enter a number for «Top N Min Values»")
     await state.set_state(TopStates.min_n)
@@ -72,10 +73,11 @@ async def min_n_handler(message: Message, state: FSMContext):
 
     try:
         n = int(message.text)
-        max_values = analyze_csv.get_top_n_min_values(column_name, n)
+        min_values = list(analyze_csv.get_top_n_min_values(column_name, n))
+        values = ",".join(map(str, min_values))
         await message.answer(f"<b>Min values from {column_name_normalized}:</b>\n"
-                             f"{"\n".join(f"{i + 1}. {str(value)}" for i, value in enumerate(max_values))}",
-                             reply_markup=to_menu_kb())
+                             f"{"\n".join(f"{i + 1}. {str(value)}" for i, value in enumerate(min_values))}",
+                             reply_markup=webapp_kb(values))
         await state.clear()
     except ValueError:
         await message.answer("It's not a number!")
@@ -87,13 +89,14 @@ async def min_n_handler(message: Message, state: FSMContext):
 @router.callback_query(F.data == "avg_values")
 async def calculate_stats_handler(call: CallbackQuery):
     await call.message.edit_text("Choose the column to see its average value",
-                                 reply_markup=avg_columns_kb())
+                                 reply_markup=columns_kb(action="average_values_call"))
 
 
-@router.callback_query(AverageColumnsCallback.filter(F.name))
-async def avg_column_handler(call: CallbackQuery, callback_data: AverageColumnsCallback):
-    column_name = callback_data.name.replace(".", "_")
-    column_name_normalized = column_name.replace("_", " ")
+@router.callback_query(ColumnsCallback.filter(F.action == "avg_values_call"))
+async def avg_column_handler(call: CallbackQuery, callback_data: ColumnsCallback):
+    column_name = callback_data.column
+    column_name_fixed = column_name.replace(" ", "_")
     avg_value = analyze_csv.get_average_value(column_name)
-    await call.message.edit_text(f"<b>The average value from {column_name_normalized}:</b>\n"
-                                 f"{avg_value}")
+    await call.message.edit_text(f"<b>The average value from {column_name}:</b>\n"
+                                 f"{avg_value}",
+                                 reply_markup=webapp_kb(avg_value))

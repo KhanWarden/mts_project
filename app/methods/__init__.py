@@ -1,10 +1,10 @@
 from .parser import fix_path, format_id
-from .html import csv_to_html
+from .html import csv_page_to_html
 
 __all__ = ['round_value',
            'fix_path',
            'format_id',
-           'csv_to_html']
+           'csv_page_to_html']
 
 
 def round_value(value):
