@@ -8,3 +8,7 @@ class ShowDataStates(StatesGroup):
 class TopStates(StatesGroup):
     max_n = State()
     min_n = State()
+
+
+class Analyze(StatesGroup):
+    stud_id = State()

@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, FSInputFile, Message
 from app.database import get_page, csv_to_excel, CSVParser
 from app.kbs import pagination_kb, show_kb, main_kb, to_menu_kb
-from app.methods import fix_path, csv_page_to_html, format_id
+from app.methods import csv_page_to_html, format_id, fix_path
 from app.states import ShowDataStates
 
 router = Router()
@@ -56,14 +56,14 @@ async def export_page_to_html_handler(call: CallbackQuery, state: FSMContext):
     page = int(state_data["page"])
 
     await csv_page_to_html(page)
-    await call.message.answer_document(FSInputFile(str(html_file)))
+    await call.message.answer_document(FSInputFile(fix_path(str(html_file))))
 
 
 @router.callback_query(F.data == "send_excel")
 async def send_excel_handler(call: CallbackQuery):
     await call.message.delete()
     await csv_to_excel()
-    await call.message.answer_document(FSInputFile(str(excel_file)))
+    await call.message.answer_document(FSInputFile(fix_path(str(excel_file))))
     await call.message.answer("I am a bot for Python Project\n"
                               "My creators are:\n"
                               "<b>1. Taldybayev Batyrkhan</b>\n"

@@ -2,7 +2,7 @@ import re
 
 
 def fix_path(path: str) -> str:
-    return re.sub(r'[\\/]', r'//', path)
+    return re.sub(r'\\', r'\\\\', path)
 
 
 def format_id(num: int) -> str:

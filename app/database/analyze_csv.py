@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from .csv_parser import CSVParser
 
 
@@ -47,11 +46,24 @@ class AnalyzeCSV(CSVParser):
         average_performance_score = self.data['Performance_Score'].mean()
         average_stress_level = self.data['Stress_Level'].mean()
 
-        productivity_coefficient = average_performance_score / average_stress_level
+        productivity_coefficient = average_stress_level / average_performance_score
 
         return {
             "average_performance_score": average_performance_score,
             "average_stress_level": average_stress_level,
+            "productivity_coefficient": productivity_coefficient
+        }
+
+    def calculate_productivity_of_student(self, student_id):
+        student_data = self.get_row(student_id)
+
+        performance_score = student_data['Performance_Score']
+        stress_level = student_data['Stress_Level']
+        productivity_coefficient = stress_level / performance_score
+
+        return {
+            "performance_score": performance_score,
+            "stress_level": stress_level,
             "productivity_coefficient": productivity_coefficient
         }
 

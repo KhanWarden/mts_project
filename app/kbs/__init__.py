@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from .show_kb import show_kb, pagination_kb
 from .analyze_kbs import (analyze_data_kb, ColumnsCallback, columns_kb, CallbackForAnalysis, instruments_kb,
-                          class_levels_kb)
+                          class_levels_kb, productivity_kb)
 
 
 __all__ = ['main_kb',
@@ -14,7 +14,8 @@ __all__ = ['main_kb',
            'webapp_kb',
            'CallbackForAnalysis',
            'instruments_kb',
-           'class_levels_kb']
+           'class_levels_kb',
+           'productivity_kb']
 
 
 def main_kb():
